@@ -1,0 +1,42 @@
+# =========================
+# TeX / LaTeX
+# =========================
+
+# Auxiliary files
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+*.bcf
+*.run.xml
+
+# Build products
+# 中間生成物であるDVIファイルや、最終成果物のPDFを無視する場合
+# *.dvi
+# *.pdf
+
+# Sync files
+*.synctex.gz
+
+# LaTeX-generated files for specific packages
+# mintedパッケージなどを使用した場合に生成されるディレクトリ
+_minted*/
+*.pyg
+
+# Build tool directories
+# latexmkなどを使用した場合
+.latexmkrc
+
+# Editor-specific files
+# VSCode with LaTeX Workshop
+.vscode/
+
+# OS-generated files
+# macOS
+.DS_Store
