@@ -60,11 +60,12 @@
 \subsection{実験の目的と達成目標（アプローチの全体像を含む）}
 本グループでは「顔画像データを用いて、一般的に“美男美女”と称される有名人と一般人を識別・分類し、特徴差を明らかにすること」をテーマとして設定した。
 
-人の美しさや魅力は主観的に表されることが多く，機械学習を用いて客観的に分析することを試みる。fairfaceのモデル構築の際に用いられた画像群と独自に美男美女の画像から構築したデータセットを用いて，画像認識のための深層学習モデルであるResNet18, ResNet34, ResNet50とEfficientNet\_b0を用いて，美男美女（有名人）と称される顔写真と一般人の写真を識別・分類するモデルの構築を問題として設定した。最終的には，有名人と一般人の差から美しさや魅力度合いがどのように違うのかを定量化・可視化し，美的評価の要素を客観的に明らかにする。また，人の美しさは黄金比や対称性といった要素で評価されることが多いが，モデルが人間の美的感覚に近い判断をどの程度行えるかというデータを明らかにする．
+人の美しさや魅力は主観的に表されることが多く，機械学習を用いて客観的に分析することを試みる。FairFaceのモデル構築の際に用いられた画像群と独自に美男美女の画像から構築したデータセットを用いて，画像認識のための深層学習モデルであるResNet18, ResNet34, ResNet50とEfficientNet\_b0を用いて，美男美女（有名人）と称される顔写真と一般人の写真を識別・分類するモデルの構築を問題として設定した。最終的には，GradCamを用いて実行結果を可視化し，有名人と一般人の顔写真を区別する上で重要になる特徴を定量的に見る。
+%最終的には，有名人と一般人の差から美しさや魅力度合いがどのように違うのかを定量化・可視化し，美的評価の要素を客観的に明らかにする。
+%また，人の美しさは黄金比や対称性といった要素で評価されることが多いが，モデルが人間の美的感覚に近い判断をどの程度行えるかというデータを明らかにする．
 
 \subsection{意図していた実験計画との違い}
-fairfaceには，データセットと学習済みモデルの2種類が公開されているが，当初の調べ不足が原因でデータセットのみと勘違いして実験計画を立てていた。fairfaceでは，すでに画像収集・前処理・ResNet34による分析まで行い高精度を叩き出している。これらと同様のことを本実験で行っても車輪の再開発となり実験の意義は少ない。そこでfairfaceに追加学習を行うことにした。fairfaceに用意されているデータセットに加え，独自にデータセットを構築し，さらに有名人・一般人のラベル付をした画像を学習することで意義深い実験ができることを志した。
-
+当初の調査段階では、FairFaceがデータセットのみを公開していると認識していたが，実際には高精度な学習済みモデル（ResNet-34ベース）も提供されていることが後に判明した。FairFaceと同様のデータセット構築とモデル学習を一から行うことは、実験としての新規性が少ない。そこで、方針を転換しFairFaceの学習済みモデルに対して、独自に収集した有名人・一般人のラベル付をした画像を学習させることで追加学習を行うアプローチを行うことにした。
 
 \section{実験方法}
 \subsection{実験目的}
@@ -74,14 +75,16 @@ fairfaceには，データセットと学習済みモデルの2種類が公開�
 有名人と一般人を分類するモデルを構築するために，2つのデータセットを準備し，前処理を行い，モデルの学習・評価を行う。
 
 \subsubsection{FairFaceとは}
-本実験ではFairFaceというモデルを用いて，分類評価を行うと同時に，独自構築した分類モデルも作成した。ここで，FairFaceというモデルについて概要を説明すると，従来の多くの顔画像データセットでは，特定の人種（白人）や性別にデータの偏りが見られる傾向にある。FairFaceでは，7つの人種グループ：白人、黒人、インド人、東アジア人、東南アジア人、中東人、ラテンアメリカ人でデータ数を均一して，人種差の少ないデータセット構築を行った。これにより，機械学習モデルの特定の人種・性別への偏り・バイアスの軽減を実現した顔画像データセット及びモデルである。
+本実験ではFairFaceというモデルを用いて，分類評価を行うと同時に，独自構築した分類モデルも作成した。ここで，FairFaceというモデルについて概要を説明すると，従来の多くの顔画像データセットでは，特定の人種（白人）や性別にデータの偏りが見られる傾向にある。FairFaceでは，7つの人種グループ：白人、黒人、インド人、東アジア人、東南アジア人、中東人、ラテンアメリカ人でデータ数を均一して，人種差の少ないデータセット構築を行った。この論文の実験では、FairFaceデータセットを含む様々なデータセットでモデルを訓練し、その後に訓練されたモデルを用いて新しいデータセットでの汎化性能を評価しており，機械学習モデルの特定の人種・性別への偏り・バイアスの軽減を実現した顔画像データセット及びモデルである。
 構築されたデータセットについては，主に大規模なパブリックデータセットyahoo YFCC100M（Flickr画像）から、意図的に人種バランスを考慮したサンプリング手法を用いて収集され、加えてTwitterやオンライン新聞からの画像も含まれている。YFCC100M全体からランダムに顔画像をサンプリングし，各国の人口構成を推定し，データセットが特定（白人）の人種に偏らないように画像数を調節した。これにより他の人種を過小評価するデータセットのバイアスを軽減している。
+
+
 
 
 \subsubsection{定義}
 本実験では，以下のように一般人と有名人の定義を行う。
 \begin{itemize}
-    \item 一般人：fairfaceのデータセットで作成されたデータセット。
+    \item 一般人：FairFaceのデータセットで作成されたデータセット。
     \item 有名人：2024年度世界の美男美女ランキング上位top50を有名人として定義する。
 \end{itemize}
 
@@ -120,7 +123,7 @@ fairfaceには，データセットと学習済みモデルの2種類が公開�
         \end{itemize}
     \item 美男美女・一般人データセットに対して，ラベル付け
         \begin{itemize}
-            \item webスクレイピングしで収集した画像データに対して，fairfaceで用意されているラベル付けと同様に美男美女データセットに対してもラベル付けを行い，それに加えて一般人か有名人かを判別するためにそれぞれ0と1を付与した。
+            \item webスクレイピングしで収集した画像データに対して，FairFaceで用意されているラベル付けと同様に美男美女データセットに対してもラベル付けを行い，それに加えて一般人か有名人かを判別するためにそれぞれ0と1を付与した。
             \item 新規作成した美男美女データセットについては，手作業で検索し，国籍・誕生日のラベルを付与した。
             \item \texttt{file\_name,age,gender,race,0/1}の5種類を列名としてcsvを作成した。\texttt{file\_name}に指定されたpathで画像を読み込み，学習を行う。
         \end{itemize}
@@ -139,12 +142,15 @@ fairfaceには，データセットと学習済みモデルの2種類が公開�
 
 
 \subsection{モデル選定}
-fairfaceが提供する学習済みモデルを本研究のタスクに合わせてカスタマイズした。これにはResNet34が使用されていたため，そのままResNet34を用いる。詳しくは\cite{karkkainenfairface}を参照されたい。\par
-（後述するが，このfairfaceのカスタマイズモデルは精度が100\%になったため，別アプローチとして本実験ではfairfaceを用いず新規にResNet18, ResNet34, ResNet50も用いた。）
+FairFaceが提供する学習済みモデルを本研究のタスクに合わせてカスタマイズした。これにはResNet34が使用されていたため，そのままResNet34を用いる。詳しくは\cite{karkkainenFairFace}を参照されたい。\par
+（後述するが，このFairFaceのカスタマイズモデルは精度が100\%になったため，別アプローチとして本実験ではFairFaceを用いず新規にResNet18, ResNet34, ResNet50も用いた。パラメータ調整はデフォルトのままである。）
+
 
 
 \subsection{パラメータ調整}
 デフォルト値のまま使用している。
+GitHubに公開されているコードでは，ハイパーパラメータが不明であるが，\cite{karkkainenFairFace}より学習率0.0001のOptimizerにADAM最適化が用いられている。これらのハイパーパラメータが選ばれた理由はGitHubや論文を読んでも不明である。
+% 学習率は0.0001で、ADAM最適化を行っている。
 
 \section{実験}
 
@@ -196,13 +202,9 @@ fairfaceが提供する学習済みモデルを本研究のタスクに合わせ
 
 
 \section{実験結果}
-% ここに実験結果を記述
-fairfaceに追加学習をすることによって有名人と一般人の差異を明らかにすることであった。しかし，fairfaceに追加学習したモデル（custom）は精度が100\%になった。過学習の影響も考えられるが，fairfaceはそもそも学習済みモデルであり，本実験はこれに追加学習を行うアプローチのため原因の切り分けが困難である。\\
-そこで，アプローチとしてResNet18,34,50とEfficientNetで新規に一般人と有名人の学習を行い，その結果を見る。
+FairFaceが提供する学習済みモデルを本研究のタスクに合わせてカスタマイズしたResNet34を用いた実行結果を表\ref{tab:custom}に示す。
 
-実行結果を表\ref{tab:custom}，表\ref{tab:resnet18}，表\ref{tab:resnet34}，表\ref{tabresnet50}，表\ref{tab:efficientnet}に示す。
-
-\subsection{custom model}
+\subsection{Custom Model}
 \begin{table}[H]
 \centering
 \caption{Custom Model}
@@ -224,15 +226,46 @@ fairfaceに追加学習をすることによって有名人と一般人の差異
 \hline
 \end{tabular}
 \end{table}
+% 原因：過学習（valで結果が出ているから問題ない。）・データのリーク（=> 原因としてわかんない）・追加学習だからわかんないよ。
+% 
 
 考察：
-学習済みモデルであるfairfaceに追加学習を行ったCustom Modelは，エポック1からtrainの精度99.48\%，valの精度100.00\%と極めて高い精度を示した。エポック2以降もtrain,valの精度の共にほぼ100\%に達しており，過学習（Overfitting）が発生している可能性が非常に高い。また，train,valの両方で高い精度が得られていることから，trainとvalの訓練データが似ている可能性もあり，用意したデータセットに特化しすぎた過学習をしたのか，どの部分を見て学習したのかは不明瞭かつ判断が困難である。
+学習済みモデルであるFairFaceに追加学習を行ったCustom Modelは，エポック1からtrainの精度99.48\%，valの精度100.00\%と極めて高い精度を示した。エポック2以降もtrain,valの精度の共にほぼ100\%に達しており，過学習が発生している可能性が高い。また，どの部分を見て学習したのかは不明瞭かつ判断が困難である。
 
-\subsection{resnet 18}
+\subsection{Custom Modelの結果の透明性確保（仮説立て）}
+本研究の目的はFairFaceに追加学習をすることによって有名人と一般人の差異を明らかにすることであった。しかし，FairFaceに追加学習したモデル（Custom Model）は精度が100\%になった。FairFaceはそもそも学習済みモデルであり，それに追加学習を行うアプローチのため，過学習の影響なのか，学習済みモデルや追加学習に起因したものなのか，原因の切り分けが困難である。\par
+表\ref{tab:custom}から過学習による傾向は見られず，過学習をしているとは考えにくい。\\
+では，なぜここまでの高精度が実現できているかを原因分析すると，以下の2点が挙げられる。
+\begin{itemize}	
+	\item \textbf{要因1.} FairFace の学習済みモデルが持つ広い表現能力（性別・人種・年齢分類）に対し，本タスク（有名人/一般人分類）が比較的容易な問題であったため，追加学習によって早期に分離境界を発見でき，このような高精度になった
+	\item \textbf{要因2.} 画像の枚数の違い
+	\begin{itemize}
+		\item fairfaceでは\cite{karkkainenFairFace}より，108,501枚の学習データが使用されている。私たちが用意したデータセットの画像数は，およそtrain で31000 枚ずつ，test で7800 枚ずつであり，そもそも学習している画像の枚数に違いがあるのではないかと考えられる。
+	\end{itemize}
+	\item \textbf{要因3.} パラメータ調整の違い
+	\begin{itemize}
+		\item FairFaceのモデルが高精度を実現した原因として適切なパラメータ調整が考えられるが，\cite{karkkainenFairFace}やGitHub等を見ても与えられているのは学習済みモデルを使って予測するコードであり，具体的にどのようにパラメータ調整が行われたのかは不明である。
+	\end{itemize}
+	\item \textbf{要因4.} 構築したデータセットの問題
+	\begin{itemize}
+		\item 構築したデータセットは一般人のデータセットは新規で用意しておらず，FairFaceの学習済みモデルですでに使用された画像データをダウンサンプリングした上で再度有名人の画像群とともに学習させている。そのため一般人のデータを学習時に背景を見る傾向にある可能性がある。
+	\end{itemize}
+\end{itemize}
+% we constructed a novel face image dataset containing 108,501 images which is balanced on Race.  
+
+追加学習を行って100\%の精度を達成したが，この精度の妥当性を検証する。
+上記仮説に基づき，違うアプローチとして，新規に学習を行い，それらと追加学習を行ったものを比較し，精度や追加学習を行ったため元のFairFaceの性別・人種・年齢分類と比べて有名人・一般人の二値分類タスクが簡単だったのかを確かめる。
+ここで，新規学習で用意したモデルはResNet18,ResNet34,ResNet50とEfficientNet\_b0であり，これらはCustom Modelと同じパラメータ調整を行った。
+
+
+\section{仮説検証1：新規学習}
+ResNet18,ResNet34,ResNet50とEfficientNetのモデルで新規学習を行なった実行結果を表\ref{tab:ResNet18}，表\ref{tab:ResNet34}，表\ref{tab:ResNet50}，表\ref{tab:efficientnet}に示す。
+
+\subsection{ResNet 18}
 \begin{table}[H]
 \centering
 \caption{ResNet-18}
-\label{tab:resnet18}
+\label{tab:ResNet18}
 \begin{tabular}{lrr}
 \hline
  Epoch &  Train Accuracy &  Validation Accuracy \\
@@ -254,11 +287,11 @@ fairfaceに追加学習をすることによって有名人と一般人の差異
 考察：ResNet-18は，trainの精度97.92\%から99.88\%まで順調に向上した一方，valの精度は99.2\%から99.6\%の範囲で安定して推移していることがわかる。trainとvalの値が激しく乖離しておらず，適切に学習できているだろうと結論づけられる。
 
 
-\subsection{resnet 34}
+\subsection{ResNet 34}
 \begin{table}[h]
 \centering
 \caption{ResNet-34}
-\label{tab:resnet34}
+\label{tab:ResNet34}
 \begin{tabular}{lrr}
 \hline
  Epoch &  Train Accuracy &  Validation Accuracy \\
@@ -279,12 +312,12 @@ fairfaceに追加学習をすることによって有名人と一般人の差異
 
 考察：ResNet-34の結果は，ResNet-18と同様の傾向を示している。前述のResNet18よりも層が深くなっているものの，検証の精度自体に著しい向上が見られなかったことから，ResNet18の時点で十分にモデルの表現能力が達成されており，これ以上層を増やしてもこれ以上の性能向上は見込めないだろう。
 
-\subsection{resnet 50}
+\subsection{ResNet 50}
 
 \begin{table}[H]
 \centering
 \caption{ResNet-50}
-\label{tab:resnet50}
+\label{tab:ResNet50}
 \begin{tabular}{lrr}
 \hline
  Epoch &  Train Accuracy &  Validation Accuracy \\
@@ -303,7 +336,7 @@ fairfaceに追加学習をすることによって有名人と一般人の差異
 \end{tabular}
 \end{table}
 
-考察：ResNet-18やResNet-34の性能を上回ることはなく，さらには訓練初期の精度が他のResNetモデルより低い（95.26\%）ことから，モデルの複雑性が増した分学習の収束に時間を要する可能性が考えられる。
+考察：ResNet-18やResNet-34の性能を上回ることはなく，ResNetでは層を深くしても（18→34→50）顕著な性能向上は見られなかった。さらには訓練初期の精度が他のResNetモデルより低い（95.26\%）ことから，モデルの複雑性が増した分学習の収束に時間を要する可能性が考えられる。本データセットの分類タスクの複雑性に対して、ResNet-18の時点ですでにモデルの表現力が十分であったことが考えられる。
 %モデルの層を増やすよりかはパラメータ調整の方が有益であろう。
 
 
@@ -333,13 +366,63 @@ fairfaceに追加学習をすることによって有名人と一般人の差異
 
 
 考察：train,valの精度の両方がエポックの進行と共に安定して向上し，最終的にはエポック10で99.86という高い値を更新している。
+\subsection{Custom Modelと新規学習の比較}
+
+新規学習のモデルは，Custom Modelと比較しても高精度で実現できており，この新規学習のアプローチでは仮説検証を行えなかった。そこで正しく顔のみを見て分類し，ここまで高い精度を実現できているかは不透明であるため，Grad-Camによる検証も行う。
 
 
-
-
-\section{失敗事例分析について：Grad-Camを用いたモデルの信頼性の検証}
+\section{仮説検証2：Grad-Camを用いたモデルの信頼性の検証}
+\subsection{検証の概要}
 Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像のどの部分に注目して一般人か美男美女かの判断を下したのかをヒートマップとして可視化する技術がある。
 図\ref{fig:gradcam_good}，図\ref{fig:gradcam_normal}にGrad-CAMを用いてモデルごとに有名人(good)と一般人(normal)の各データの平均したヒートマップを示す。
+本研究で得られた99\%超という検証精度の原因を探る。
+各画像は以下に示すモデルを適用した結果である。
+\begin{itemize}
+	\item 1行目
+	\begin{itemize}
+	\item 追加学習したモデル：custom
+	\item EfficientNet\_b0
+	\item ResNet18
+	\end{itemize}
+	\item 2行目
+	\begin{itemize}
+	\item ResNet34
+	\item ResNet50
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{検証結果}
+%======================
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{combined_images_good.png}
+    \caption{Grad-CAMを用いた有名人の判断根拠の可視化}
+    \label{fig:gradcam_good}
+\end{figure}
+%======================
+%======================
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{combined_images_normal.png}
+    \caption{Grad-CAMを用いた一般人の判断根拠の可視化}
+    \label{fig:gradcam_normal}
+\end{figure}
+%======================
+
+\subsubsection{検証結果の考察}
+有名人の判断根拠について，customeは顔全体，特に口元がよく見られているが，それ以外のResNet・EfficientNetについては，全体の傾向として，目と口が判断根拠になっていることがわかる。\par
+一方，一般人の判断根拠について，customモデルは目元の上部（額と思われる）を見ており，それ以外のモデルは人物の右背景を見ていることがわかる。右背景を見ているのでは目的であった顔を見て分類する目的を果たせておらず，実験の目標は達成できていない。そこで次の章では，これらの背景の影響を抑えるために画像を白背景にして再度を学習を行った。
+%ただし，用意したデータセットをモデルごとに実行し，Grad-Camで得た出力の「モデルごとの平均」であることに注意したい。
+
+
+
+
+\subsection{白背景画像を用いたGrad-Camの改善}
+\subsubsection{検証の概要}
+
+背景情報への依存を低減させる試みとして全画像の背景を白色に加工し，再度学習を行なった。
+図\ref{fig:gradcam_good_white}，図\ref{fig:gradcam_normal_white}にGrad-CAMを用いてモデルごとに有名人(good)と一般人(normal)の各データの平均したヒートマップを示す。
 
 各画像は以下に示すモデルを適用した結果である。
 \begin{itemize}
@@ -356,44 +439,58 @@ Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像の
 	\end{itemize}
 \end{itemize}
 
-\subsection{実験結果の考察}
-有名人の判断根拠について，customeは顔全体，特に口元がよく見られているが，それ以外のResNet・EfficientNetについては，全体の傾向として，目と口が判断根拠になっていることがわかる。\par
-一方，一般人の判断根拠について，customモデルは目元の上部（額と思われる）を見ており，それ以外のモデルは人物の右背景を見ていることがわかる。右背景を見ているのでは目的であった顔を見て分類する目的を果たせておらず，実験の目標は達成できていない。
-この原因については，図\ref{fig:good_ex}，図\ref{fig:normal_ex}に示したように有名人の画像の全体的な傾向として，記者会見などで用いられるバックパネルやスタジオで撮影されていると思われる画像など，背景がシンプルなものが多い。一方で，一般人の画像は，Flickr 画像とTwitterやオンライン新聞の画像などがデータセットに使われており，人物の横に他の人の体の一部が写っていたりカメラを向いていなかったりするものが多い傾向にある。そういった構築したデータセットの画像の特徴から，一般人の分類において背景で判断されたと考えられる。そこで次の章では，画像を白背景にして再度を学習を行った。
-%ただし，用意したデータセットをモデルごとに実行し，Grad-Camで得た出力の「モデルごとの平均」であることに注意したい。
 
-	
+\subsubsection{検証結果}
 %======================
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=1.1\textwidth]{combined_images_good.png}
-    \caption{Grad-CAMを用いた有名人の判断根拠の可視化}
-    \label{fig:gradcam_good}
+    \includegraphics[width=1.1\textwidth]{white_combined_images_good.png}
+    \caption{白背景でのGrad-CAMを用いた有名人の判断根拠の可視化}
+    \label{fig:gradcam_good_white}
 \end{figure}
 %======================
 %======================
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.1\textwidth]{combined_images_normal.png}
-    \caption{Grad-CAMを用いた一般人の判断根拠の可視化}
-    \label{fig:gradcam_normal}
+    \includegraphics[width=1.1\textwidth]{white_combined_images_normal.png}
+    \caption{白背景でのGrad-CAMを用いた一般人の判断根拠の可視化}
+    \label{fig:gradcam_normal_white}
 \end{figure}
 %======================
 
 
+\subsection{検証結果・考察}
+
+有名人の判断根拠については，先ほどと同様に顔全体，特に目元・口元がよく見られているが，EfficientNetについては，顔から離れた背景ないしは目元を注視している。\par
+しかしながら，一般人の判断根拠については白背景の有無に関わらず右背景を見ている傾向にある。
+
+一方，一般人の判断根拠について，右背景を注視する傾向にあり，人物には注目できていないことがわかる。
+%ただし，用意したデータセットをモデルごとに実行し，Grad-Camで得た出力の「モデルごとの平均」であることに注意したい。
+
+
+この原因については，図\ref{fig:good_ex}，図\ref{fig:normal_ex}に示したように有名人の画像の全体的な傾向として，記者会見などで用いられるバックパネルやスタジオで撮影されていると思われる画像など，背景がシンプルなものが多い。また人物の写りがよくなるように画像加工されていたり，有名人の写真はいわゆる一眼レフなどの良いカメラが使われていたりといった可能性も考えられる。
+
+一方で，一般人の画像は，Flickr 画像とTwitterやオンライン新聞の画像などがデータセットに使われており，人物の横に他の人の体の一部が写っているなどの背景が乱雑なものやカメラを向いていなかったりするものが多い傾向にある。そういった構築したデータセットの画像の特徴から，一般人の分類において背景で判断されたと考えられる。\\
+
+
+しかし，それを踏まえたとしてもCustom Modelは正しく顔を捉えることができており，前述した仮説による影響が考えられる。したがって，検証結果よりCustom Modelの精度が高い理由は
+
+
+\section{まとめ}
+%新規学習モデル群も非常に高い精度を達成したが、ResNetアーキテクチャでは層を深くしても（18→34→50）顕著な性能向上は見られなかった。これは、本データセットの分類タスクの複雑性に対して、ResNet-18の時点ですでにモデルの表現力が十分であったことが考えられる。
+%新規学習モデルは分類時に特に画像の背景に依存している傾向にあり，これは構築したデータセットに含まれるバイアスの影響が大きい。
+
+
+gradcamの実行結果を見ると，口と目が有名人と一般人で異なることが示唆される。
 
 
 
 
-\section{白背景画像を用いた失敗事例分析の改善}
-
-
-
-
-\section{考察}
-% ここに考察を記述
 
 \section{反省・今後の課題}
+
+
+
 githubを使おうとしたが，使える人数が少なくgithubでのバージョン管理が実質できていなかった。さらにamaneで実行する場合，さらにソースコードのバージョンが不透明になってしまった。
 役割分担・実験計画が適切にできておらず，実験の後半で急いで学習を行った。計画よりも前処理に時間がかかり，その後も実行しその結果を考察する時間をファイルの欠損の対応・コンテナプラットフォームSingularity使用のための準備といった対応に終われてしまった。
 
@@ -405,11 +502,10 @@ githubを使おうとしたが，使える人数が少なくgithubでのバー�
 本実験では，2024年美男美女ランキングtop50をもとに，50名ずつ抽出し，アップサンプリング（左右反転）を施した。これは一般人のデータセットと比較して，偏りが生じる。他のアップサンプリングの方法として回転・輝度変更といった手法があるが，これらでさらにデータを増やすよりかは，美男美女の人名数を50名ずつよりさらに増やす方がバイアスを削減できると考える。本実験では時間の都合・第一回の実験時の計画がずれていたため省略した。
 
 \section{まとめ}
-fairfaceで構築されているデータセットは，本当にイケメンでない人が含まれているのかという疑問から，分担して画像を確認していったが，いわゆる芸能人並のイケメンの数は少なかった。
 
 
 \begin{thebibliography}{9}
-    \bibitem{karkkainenfairface}
+    \bibitem{karkkainenFairFace}
     Karkkainen, Kimmo and Joo, Jungseock.
     FairFace: Face Attribute Dataset for Balanced Race, Gender, and Age for Bias Measurement and Mitigation.
     In \textit{Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision}, pages 1548--1558, 2021.\\
@@ -422,7 +518,7 @@ fairfaceで構築されているデータセットは，本当にイケメンで
     \bibitem{bijoshi}
     Most Beautiful Faces 2024, gigazine.net, \\ \url{https://gigazine.net/gsc_news/en/20241229-most-beautiful-faces-2024/}
     
-        \bibitem{hopenet}
+        \bibitem{hopenet_paper}
         Nataniel Ruiz Eunji Chong and James M. Rehg (Georgia Institute of Technology).
         Fine-Grained Head Pose Estimation Without Keypoints
          In \textit{The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops}, pages 2074--2083, 2018. \\
@@ -430,6 +526,11 @@ fairfaceで構築されているデータセットは，本当にイケメンで
 
     \bibitem{hopenet}
     Head Pose Estimation, \url{https://github.com/natanielruiz/deep-head-pose}
+    \bibitem{gradcam}Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization, 
+    Ramprasaath R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh, Dhruv Batra,\\
+    \url{https://arxiv.org/abs/1610.02391}
+    
+  %github repo: https://github.com/jacobgil/pytorch-grad-cam
 \end{thebibliography}
 
 \end{document}
