@@ -13,6 +13,10 @@
 \usepackage{url}
 \usepackage{ascmac}
 \usepackage{fancybx}
+\usepackage{subcaption}
+\usepackage{caption}
+\usepackage[margin=1in]{geometry} % ページ余白を狭めて表示領域を広く
+
 % \bibliographystyle{junsrt} % スタイル（番号順）
 % \bibliographystyle{plain}
 % \bibliography{references}  % references.bib を指定（拡張子は不要）
@@ -281,6 +285,7 @@ FairFaceが提供する学習済みモデルを本研究のタスクに合わせ
 ResNet18,ResNet34,ResNet50とEfficientNetのモデルで新規学習を行なった実行結果を表\ref{tab:ResNet18}，表\ref{tab:ResNet34}，表\ref{tab:ResNet50}，表\ref{tab:efficientnet}に示す。
 
 \subsection{ResNet 18}
+\subsection{ResNet 18}
 \begin{table}[H]
 \centering
 \caption{ResNet-18}
@@ -303,7 +308,10 @@ ResNet18,ResNet34,ResNet50とEfficientNetのモデルで新規学習を行なっ
 \end{tabular}
 \end{table}
 
-考察：ResNet-18は，trainの精度97.92\%から99.88\%まで順調に向上した一方，valの精度は99.2\%から99.6\%の範囲で安定して推移していることがわかる。trainとvalの値が激しく乖離しておらず，適切に学習できていることが示唆される。またエポック3以降は，学習精度と検証精度がほぼ同程度の水準で推移しており，安定した汎化性能を有していると評価できる。
+
+
+
+考察：ResNet-18は，Train Accuracyの精度が97.92\%から99.88\%まで順調に向上した一方，Validation Accuracyの精度は99.2\%から99.6\%の範囲で安定して推移していることがわかる。Train AccuracyとValidation Accuracyの値が激しく乖離しておらず，適切に学習できていることが示唆される。またエポック3以降は，学習精度と検証精度がほぼ同程度の水準で推移しており，安定した汎化性能を有していると評価できる。
 
 
 \subsection{ResNet 34}
@@ -329,7 +337,7 @@ ResNet18,ResNet34,ResNet50とEfficientNetのモデルで新規学習を行なっ
 \end{tabular}
 \end{table}
 
-考察：ResNet-34の結果は，ResNet-18と同様の傾向を示している。エポック10において，trainが99.84, valが99.47に達しており，ResNet18よりも若干低い性能を示している。前述のResNet18よりも層が深くなっているものの，検証の精度自体に著しい向上が見られなかったことから，ResNet18の時点で十分にモデルの表現能力が達成されており，これ以上層を増やしてもこれ以上の性能向上は見込めないだろう。
+考察：ResNet-34の結果は，ResNet-18と同様の傾向を示している。エポック10において，Train Accuracyが99.84，Validation Accuracyが99.47に達しており，ResNet18よりも若干低い性能を示している。前述のResNet18よりも層が深くなっているものの，検証の精度自体に著しい向上が見られなかったことから，ResNet18の時点で十分にモデルの表現能力が達成されており，これ以上層を増やしてもこれ以上の性能向上は見込めないだろう。
 
 \subsection{ResNet 50}
 
@@ -355,7 +363,7 @@ ResNet18,ResNet34,ResNet50とEfficientNetのモデルで新規学習を行なっ
 \end{tabular}
 \end{table}
 
-考察：ResNet-18やResNet-34の性能を上回ることはなく，ResNetでは層を深くしても（18→34→50）顕著な性能向上は見られなかった。さらには訓練初期の精度が他のResNetモデルより低い（95.26\%）ことから，モデルの複雑性が増した分学習の収束に時間を要する可能性が考えられる。本データセットの分類タスクの複雑性に対して、ResNet-18の時点ですでにモデルの表現力が十分であったことが考えられる。
+考察：ResNet-18やResNet-34の性能を上回ることはなく，ResNetでは層を$18,34,50 \cdots$と深くしても顕著な性能向上は見られなかった。さらには訓練初期のTrain Accuracyが他のResNetモデルより低い（95.26\%）ことから，モデルの複雑性が増した分学習の収束に時間を要する可能性が考えられる。本データセットの分類タスクの複雑性に対して、ResNet-18の時点ですでにモデルの表現力が十分であったことが考えられる。
 %モデルの層を増やすよりかはパラメータ調整の方が有益であろう。
 
 
@@ -388,11 +396,37 @@ ResNet18,ResNet34,ResNet50とEfficientNetのモデルで新規学習を行なっ
 
 
 \subsection{Custom Modelと新規学習の比較}
+図\ref{fig:model_outputs_sorted }にCustom Modelと新規学習の実行結果をグラフとして示す。
+%＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+\begin{figure}[H]
+  \centering
+
+  % --- 1段目 ---
+  \includegraphics[width=0.48\textwidth]{CustomModel_output.png}
+  \includegraphics[width=0.48\textwidth]{ResNet-18_output.png}
+  
+  \vspace{0.3cm} % 縦間隔
+
+  % --- 2段目 ---
+  \includegraphics[width=0.48\textwidth]{ResNet-34_output.png}
+  \includegraphics[width=0.48\textwidth]{ResNet-50_output.png}
+  
+  \vspace{0.3cm}
+
+  % --- 3段目（中央寄せ） ---
+  \includegraphics[width=0.6\textwidth]{EfficientNet_output.png}
+
+  \caption{各モデルの出力結果（Custom Modelと新規学習モデル）}
+  \label{fig:model_outputs_sorted}
+\end{figure}
+
+%＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+Custom Modelがエポック1から高精度を実現できているものの，新規学習モデルについてもエポック1から95\%後半と高精度で実現できており，新規学習モデルはCustomModelと同様のパラメータ調整を行ったことからCustom Modelの高精度の原因がパラメータ調整によるものとは考えにくい。一方で新規学習したResNetやEfficientNetにとって美男美女・一般人の2値分類タスクがそもそも簡単なタスクであった可能性がある。そこで正しく顔のみを見て分類し，ここまで高い精度を実現できているかは不透明であるため，Grad-Camによる検証も行う。
 
 %新規学習のモデルは，Custom Modelと比較しても高精度で実現できており，この新規学習のアプローチでは仮説の検証を行えなかった。
-新規学習のモデルは，Custom Modelと比較しても高精度で実現できており，
-高精度の原因がパラメータ調整によるものとは考えにくい。
-一方で新規学習したResNetやEfficientNetにとって美男美女・一般人の2値分類タスクがそもそも簡単なタスクであった可能性がある。そこで正しく顔のみを見て分類し，ここまで高い精度を実現できているかは不透明であるため，Grad-Camによる検証も行う。
+
 
 
 \section{仮説検証2：Grad-Camを用いたモデルの信頼性の検証}
