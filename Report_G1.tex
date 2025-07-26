@@ -628,4 +628,117 @@ GitHubを使おうとしたが，使える人数が少なくGitHubでのバー�
   %github repo: https://github.com/jacobgil/pytorch-grad-cam
 \end{thebibliography}
 
+
+% ==============================================================================
+\clearpage
+\appendix % 付録部分の始まり
+\section{GradCamを用いた分析の詳細}
+
+\subsection{GradCamを用いた分析の実行結果}
+
+図\ref{fig:append_custom(good)}にCustom Model (good)，
+図\ref{fig:append_custom(normal)}にCustom Model (normal)，
+図\ref{fig:append_efficientnetb0(good)}にEfficientNetB0 (good)，
+図\ref{fig:append_efficientnetb0(normal)}にEfficientNetB0 (normal)，
+図\ref{fig:append_resent18(good)}にResNet18 (good)，
+図\ref{fig:append_resnet18(normal)}にResNet18 (normal)，
+図\ref{fig:append_resnet34(good)}にResNet34 (good)，
+図\ref{fig:append_resnet34(normal)}にResNet34 (normal)，
+図\ref{fig:append_resnet50(good)}にResNet50 (good)，
+図\ref{fig:append_resnet50(normal)}にResNet50 (normal) の実行結果を示す。
+これらは，構築したデータセットの画像に対してGradCamのヒートマップを描画したものであり，客観的にモデルが顔領域のどの部分をみているのかを示す。
+
+% Custom(good)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{custom(good).jpg}
+    \caption{Custom Model (good) の実行結果}
+    \label{fig:append_custom(good)}
+\end{figure}
+
+% Custom(normal)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{custom(normal).jpg}
+    \caption{Custom Model (normal) の実行結果}
+    \label{fig:append_custom(normal)}
+\end{figure}
+
+% EfficientNetB0(good)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{efficientnetb0(good).jpg}
+    \caption{EfficientNetB0 (good) の実行結果}
+    \label{fig:append_efficientnetb0(good)}
+\end{figure}
+
+% EfficientNetB0(normal)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{efficientnetb0(normal).jpg}
+    \caption{EfficientNetB0 (normal) の実行結果}
+    \label{fig:append_efficientnetb0(normal)}
+\end{figure}
+
+% ResNet18(good)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{resent18(good).jpg}
+    \caption{ResNet18 (good) の実行結果}
+    \label{fig:append_resent18(good)}
+\end{figure}
+
+% ResNet18(normal)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{resnet18(normal).jpg}
+    \caption{ResNet18 (normal) の実行結果}
+    \label{fig:append_resnet18(normal)}
+\end{figure}
+
+% ResNet34(good)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{resnet34(good).jpg}
+    \caption{ResNet34 (good) の実行結果}
+    \label{fig:append_resnet34(good)}
+\end{figure}
+
+% ResNet34(normal)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{resnet34(normal).jpg}
+    \caption{ResNet34 (normal) の実行結果}
+    \label{fig:append_resnet34(normal)}
+\end{figure}
+
+% ResNet50(good)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{resnet50(good).jpg}
+    \caption{ResNet50 (good) の実行結果}
+    \label{fig:append_resnet50(good)}
+\end{figure}
+
+% ResNet50(normal)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{resnet50(normal).jpg}
+    \caption{ResNet50 (normal) の実行結果}
+    \label{fig:append_resnet50(normal)}
+\end{figure}
+
+
+\subsection{考察}
+全体的な傾向として，美男美女の顔画像では，モデルの注目は目，鼻，口といった顔の中心的なパーツに強く集中している一方で，一般人の画像では注目領域が頬，額，顎の輪郭，背景など拡散している傾向が見られる。判断の根拠となる明確な特徴を見つけられていないことがわかる。
+
+
+図\ref{fig:append_custom(good)}では，両目，鼻，口といった顔の中心領域をバランスよく見ていることがわかる。特定の偏りが見られていない。図\ref{fig:append_custom(normal)}では，額付近を注視している傾向にあるが，顔の輪郭全体から特徴を見ていることがわかる。\par
+図\ref{fig:append_efficientnetb0(good)}では，実行したモデルの中で最も目元を注目しているといえる。一方で，一般人（図\ref{fig:append_efficientnetb0(normal)}）ではそのような傾向が見られず背景や衣服を見て判断していることがわかる。\par
+
+図\ref{fig:append_resent18(good)}では，顔の特に口元を注視する傾向にあり，図\ref{fig:append_resnet18(normal)}は右背景や目元付近を学習している傾向にある。\par
+図\ref{fig:append_resnet34(good)}では，目・鼻・口を注目しており，図\ref{fig:append_custom(good)}と同じような傾向が伺える。一方で，図\ref{fig:append_resnet34(normal)}は背景を特に注目している。\par
+
+図\ref{fig:append_resnet50(good)}は注目領域がシャープになっており，頬や額を見て判断している傾向にあるが，図\ref{fig:append_resnet50(normal)}では依然として背景を見て判断してしまっている。
+
 \end{document}
