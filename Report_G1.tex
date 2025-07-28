@@ -135,7 +135,7 @@
         \end{itemize}
     \item 正面・側面の判定
         \begin{itemize}
-            \item 顔の向きが学習に与える影響を排除するために，hopenetを用いて正面を向いている画像のみ抽出した。側面を向いている画像はデータセットから除外している。
+            \item 顔の向きが学習に与える影響を排除するために，HopeNetを用いて正面を向いている画像のみ抽出した。側面を向いている画像はデータセットから除外している。
             \item HopeNetとは，1枚の顔写真からYaw(左右の向き)，Pitch（上下の向き），Roll（傾き）を求め，その人がどの方向を向いているのかを推定する深層学習モデルである。感情認識などに用いられている。
         \end{itemize}
     \item アップサンプリング・ダウンサンプリング
@@ -184,11 +184,11 @@ GitHubに公開されているFairFaceのソースコードでは，ハイパー
 \begin{itemize}
     \item 215706D：KIM HYUNWOO
         \begin{itemize}
-            \item 正面画像抽出・ラベル付・複数のResNetとEfficientNetでの実行・Grad Cam
+            \item 正面画像抽出・ラベル付・複数のResNetとEfficientNetでの実行・Grad Camでの検証・考察・プレゼンテーション作成
         \end{itemize}
     \item 235221E：山脇大輝
         \begin{itemize}
-            \item FairFaceの調査，カスタマイズ，Webスクレイピング・リサイズ・トリミング・ラベル付
+            \item FairFaceの調査，カスタマイズ，Webスクレイピング・リサイズ・トリミング・ラベル付・Grad Camでの検証・考察・レポート作成
         \end{itemize}
     \item 235701B：松田遼平
         \begin{itemize}
@@ -208,7 +208,7 @@ GitHubに公開されているFairFaceのソースコードでは，ハイパー
 
 
 \subsection{用意したデータセット画像}
-図\ref{fig:good_ex}，図\ref{fig:normal_ex}に用意したデータセットの画像の一部を示す。これは筆者がランダムに選択したものであり，レポートの可読性を向上させるために用意した。
+レポートの可読性を向上させるために，図\ref{fig:good_ex}，図\ref{fig:normal_ex}に用意したデータセットの画像の一部を示す。
 %======================
 \begin{figure}[htbp]
     \centering
@@ -257,7 +257,7 @@ FairFaceが提供する学習済みモデルを本研究のタスクに合わせ
 % 原因：過学習（valで結果が出ているから問題ない。）・データのリーク（=> 原因としてわかんない）・追加学習だからわかんないよ。
 % 
 
-考察：
+\subsubsection*{Custom Modelの考察：}
 学習済みモデルであるFairFaceに追加学習を施したCustom Modelは，エポック1からtrainの精度99.48\%，valの精度100.00\%と極めて高い精度を示した。エポック2以降もtrain,valの精度はほぼ100\%に達しており，この高精度が過学習によるものなのか，あるいは学習済みモデルや追加学習が原因となったものなのか，そもそも本モデルが画像のどの部分に着目して学習を行ったのかについても明確ではなく，高精度の要因の切り分けは困難である。さらに学習済みモデルについてGitHubや論文を参照しても詳細な情報は記載されておらず，内部の動作はブラックボックス化しており，原因の特定は困難である。\par
 
 \subsection{Custom Modelの結果の透明性確保（仮説立て）}
@@ -273,12 +273,6 @@ FairFaceが提供する学習済みモデルを本研究のタスクに合わせ
 
   \item \textbf{要因2. パラメータ調整の違い}：  \\
   FairFaceモデルが高精度を示した背景には，適切なパラメータ調整が行われていた可能性がある．（しかしながら，文献\cite{karkkainenFairFace}やGitHub上に公開されているのは予測用のコードのみであり，具体的な調整手法やその根拠については明記されていない．）
-
-  \item \textbf{要因3. 構築したデータセットに起因する要素}：
-  \begin{itemize}
-    \item FairFaceでは文献\cite{karkkainenFairFace}において約108,501枚の学習用画像が使用されている一方，本研究で用いたデータセットは，trainで約31,000枚，testで約7,800枚と画像数に大きな差がある．この画像数の違いが，学習モデルに影響を及ぼしている可能性がある．
-    \item 一般人のデータについては新たに収集せず，FairFaceの学習済みモデルで既に使用された画像からダウンサンプリングして再利用している．そのため，モデルが顔以外の背景情報に依存して分類を行う傾向が生じた可能性がある．
-  \end{itemize}
 \end{itemize}
 % we constructed a novel face image dataset containing 108,501 images which is balanced on Race.  
 
@@ -402,33 +396,33 @@ ResNet-18やResNet-34の性能を上回ることはなく，ResNetでは層を$1
 \subsubsection*{EfficientNet\_b0の考察：}
 エポック1の時点で既に高い精度を示しており，以降の学習過程においてもtrain,valの精度の両方がエポックの進行と共に安定して向上し，最終的にはエポック10で99.86という高い値を更新している。EfficientNet は本タスクにおいて極めて高い表現力を有しており，少数のエポックでも十分な収束が得られることがわかる。Train Accuracyと Validation Accuracy の推移は類似しており，両者間に大きな乖離は見られないことから，過学習の兆候も確認されない。
 
-\clearpage
+%\clearpage
 
 \subsection{Custom Modelと新規学習の比較}
-図\ref{fig:model_outputs_sorted }にCustom Modelと新規学習の実行結果をグラフとして示す。
+% 図\ref{fig:model_outputs_sorted }にCustom Modelと新規学習の実行結果をグラフとして示す。
 %＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
-\begin{figure}[H]
-  \centering
+% \begin{figure}[H]
+%   \centering
 
-  % --- 1段目 ---
-  \includegraphics[width=0.48\textwidth]{CustomModel_output.png}
-  \includegraphics[width=0.48\textwidth]{ResNet-18_output.png}
+%   % --- 1段目 ---
+%   \includegraphics[width=0.48\textwidth]{CustomModel_output.png}
+%   \includegraphics[width=0.48\textwidth]{ResNet-18_output.png}
   
-  \vspace{0.3cm} % 縦間隔
+%   \vspace{0.3cm} % 縦間隔
 
-  % --- 2段目 ---
-  \includegraphics[width=0.48\textwidth]{ResNet-34_output.png}
-  \includegraphics[width=0.48\textwidth]{ResNet-50_output.png}
+%   % --- 2段目 ---
+%   \includegraphics[width=0.48\textwidth]{ResNet-34_output.png}
+%   \includegraphics[width=0.48\textwidth]{ResNet-50_output.png}
   
-  \vspace{0.3cm}
+%   \vspace{0.3cm}
 
-  % --- 3段目（中央寄せ） ---
-  \includegraphics[width=0.6\textwidth]{EfficientNet_output.png}
+%   % --- 3段目（中央寄せ） ---
+%   \includegraphics[width=0.6\textwidth]{EfficientNet_output.png}
 
-  \caption{各モデルの出力結果（Custom Modelと新規学習モデル）}
-  \label{fig:model_outputs_sorted}
-\end{figure}
+%   \caption{各モデルの出力結果（Custom Modelと新規学習モデル）}
+%   \label{fig:model_outputs_sorted}
+% \end{figure}
 
 %＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
@@ -443,6 +437,7 @@ Custom Modelがエポック1から高精度を実現できているものの，�
 \label{label:仮説検証2}
 \subsection{検証の概要}
 Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像のどの部分に注目して一般人か美男美女かの判断を下したのかをヒートマップとして可視化する技術がある。
+アップサンプリング・ダウンサンプリングを施したデータセットに対して，前章で作成した各モデルで学習を行い，その結果をGradCamを実行することにより検証していく。
 図\ref{fig:gradcam_good}，図\ref{fig:gradcam_normal}にGrad-CAMを用いてモデルごとに美男美女(good)と一般人(normal)の各データの平均したヒートマップを示す。
 本研究で得られた99\%超という検証精度の原因を探る。
 各画像は以下に示すモデルを適用した結果である。
@@ -511,6 +506,7 @@ Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像の
 
 
 \subsubsection{検証結果}
+
 %======================
 \begin{figure}[H]
     \centering
@@ -529,21 +525,67 @@ Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像の
 %======================
 
 
-\subsection{検証結果・考察}
-\label{label:検証結果・考察}
+\subsection{検証結果}
+\label{label:検証結果}
 
-美男美女の判断根拠については，先ほどと同様に顔全体，特に目元・口元がよく見られているが，EfficientNetについては，顔から離れた背景ないしは目元を注視している。
-一方，一般人の判断根拠について，白背景の有無に関わらず右背景を注視する傾向にあり，人物には注目できていないことがわかる。
+美男美女の判断根拠については，先ほどと同様に顔全体，特に目元・口元がよく見られているが，EfficientNetについては，顔から離れた背景ないしは目元を注視している。\par
+一方，一般人の判断根拠について，Custom Modelは額部分を注視している傾向にあると見受けられるが，新規学習モデルは白背景の有無に関わらず右背景を注視する傾向にあり，人物には注目できていないことがわかる。
 %ただし，用意したデータセットをモデルごとに実行し，Grad-Camで得た出力の「モデルごとの平均」であることに注意したい。
 
-この原因については，データに内在していたバイアスの影響が考えられる。\par
-図\ref{fig:good_ex}，図\ref{fig:normal_ex}に示したように美男美女の画像の全体的な傾向として，記者会見などで用いられるバックパネルやスタジオで撮影されていると思われる画像など，背景がシンプルなものが多い。また人物の写りがよくなるように画像加工されていたり，美男美女の写真はいわゆる一眼レフなどの良いカメラが使われていたりといった可能性も考えられる。美男美女・一般人ともに$300 \times 300$にリサイズ処理を施したため，解像度については統一されているが，色やボケ感・特定の構図についてはデータセット構築時に考慮していない。\\
 
-一方で，一般人の画像は，Flickr 画像とTwitterやオンライン新聞の画像などがデータセットに使われており，人物の横に他の人の体の一部が写っているなどの背景が乱雑なものやカメラを向いていなかったりするものが多い傾向にある。そういった構築したデータセットの画像の特徴から，一般人の分類において背景で判断されたと考えられる。\par
+\subsection{考察}
+
+新規学習モデルにおいて，図\ref{fig:gradcam_good_white}，図\ref{fig:gradcam_normal_white}のようになった結果を以下に考察する。
+\begin{itemize}
+  \item \textbf{背景処理の不完全性}
+    \begin{itemize}
+      \item 白背景化にはCNNベースの画像処理を用いたが，図\ref{white_example_1}に示すように背景の切り抜きが不完全な画像が存在した。アップサンプリングおよびダウンサンプリングを施した後のデータに対して白背景を適用する手順を採用したため，ここからさらに図\ref{white_example_1}のような画像を除去すると，一般人および美男美女のデータ数に偏りが生じる可能性があった．また，処理はサーバ上で実行されており，結果の確認に時間を要したため，時間的制約からこれらの画像を除去しなかった．
+    \end{itemize}
+%======
+
+  \item \textbf{背景を適切に除去できた場合にも右背景を見ている傾向が強い。}
+  \begin{itemize}
+  \item 図\ref{white_example_1}のように人物の境界を正確に捉え，背景を適切に除去できた場合でも，モデルが人物ではなく背景に注目する事例も確認された。図\ref{white_example_1}のような画像が含まれた状態，かつデータ数が少なかったことが1要因と考えられる。
+  \end{itemize}
+%======
+  \item \textbf{データセットのバイアス}
+    \begin{itemize}
+      \item この問題の根本的な要因として，データに内在するバイアスの影響が考えられる。図\ref{fig:good_ex}および図\ref{fig:normal_ex}に示すように，美男美女の画像は，記者会見におけるバックパネルやスタジオで撮影されたと考えられるものが多く，全体的に背景がシンプルである傾向にあった．また，人物の写りが良くなるように画像加工が施されていたり，いわゆる一眼レフなどの高性能なカメラが用いられていた可能性も否定できない．美男美女および一般人の画像は共通して300×300ピクセルにリサイズされており，解像度は統一されているが，色調，ボケ感，構図といった要素はデータセット構築時に考慮しておらず，明示的に制御されていなかった．
+      \item 一方で，一般人の画像にはFlickrやTwitter，オンライン新聞などから取得した画像が含まれており，人物の横に他の人物の体の一部が写り込んでいるなど，背景が複雑なものが多く見受けられた．また，人物がカメラの方を向いていない画像も多く含まれていた．このようなデータセットの特徴により，一般人の分類においてモデルが人物ではなく背景に基づいて判断した可能性が高いと考えられる．
+    \end{itemize}
+    \item \textbf{追加学習と新規学習の学習したデータセットの画像枚数の違い}
+  \begin{itemize}
+    \item FairFaceでは文献\cite{karkkainenFairFace}において約108,501枚の学習用画像が使用されている一方，本研究で用いたデータセットは，trainで約31,000枚，testで約7,800枚と画像数に差がある．この画像数の違いが，学習モデルに影響を及ぼしている可能性がある．
+    \item 一般人のデータについては新たに収集せず，FairFaceの学習済みモデルで既に使用された画像からダウンサンプリングして再利用している．そのため，モデルが顔以外の背景情報に依存して分類を行う傾向が生じた可能性がある．
+  \end{itemize}
+\end{itemize}
 
 
 
-しかし，それを踏まえたとしてもCustom Modelは正しく顔を捉えることができており，これは『新規学習モデルが背景に注目した一方，Custom Modelが一貫して顔領域に注目できた』という事実より，FairFaceの膨大な事前学習が原因であると考察される。
+図\ref{white_example_1}，図\ref{white_example_2}に白背景適用後について，良くなかった画像の例を出す。ResNet18で学習したGradCamの結果も重ね合わせて示している。
+%======================
+\begin{figure}[H]
+  \centering
+  % --- 1枚目 ---
+  \begin{minipage}[b]{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{white\_ex\_1.jpg}
+    \caption{白背景適用後の画像例(1)}  
+    \label{white_example_1}
+  \end{minipage}
+  \hfill
+  % --- 2枚目 ---
+  \begin{minipage}[b]{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{white\_ex\_2.jpg}
+     \caption{白背景適用後の画像例(2)}   
+    \label{white_example_2}
+  \end{minipage}
+\end{figure}
+%======================
+
+
+Custom Modelもデータセットのバイアスは同様に受けているが，しかしながらCustom Modelは正しく顔を捉えることができており，これは『新規学習モデルが背景に注目した一方，Custom Modelが一貫して顔領域に注目できた』という事実より，FairFaceの膨大な事前学習が原因であると考察される。
 また，\ref{label:仮設立て}で示した仮説による影響が考えられる。つまり，本タスクに対してResNet34であれば十分な表現能力があり，FairFaceの事前学習によって獲得された汎用的な顔特徴表現が，本タスクの学習を極めて効率的にしたと考えられる。
 
 
@@ -551,20 +593,18 @@ Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像の
 \section{まとめ}
 \label{label:まとめ}
 
-本実験では追加学習として美男美女・一般人の分類を行い，GradCamの結果からも顔を正しく識別しながら精度が100\%を達成していることがわかった。美男美女と称される人と一般人の差異は口もとと目が大きな影響を与えることが図\ref{fig:gradcam_good}，図\ref{fig:gradcam_normal}より示唆される。
+本実験では，美男美女・一般人の二値分類タスクにおいて，追加学習を施したCustom Modelと新規学習モデル（ResNet, EfficientNet）で学習を行った。実験1では精度を比較検討し，両モデルが高精度（95\%以上）を達成したが，実験2のGrad-Cam分析により，新規学習モデルが人物ではなく背景，特に右背景に注目していることが明らかになった。これは，白背景処理の不完全性や，美男美女の画像がシンプルな背景を持つ一方，一般人の画像が複雑な背景を持つといった，データセットに内在するバイアスに起因すると考察される。対照的に，Custom ModelはFairFaceによる大規模な事前学習の影響で，一貫して顔領域に注目した特徴表現を獲得していることが示された。また，美男美女と称される人と一般人の差異は口もとと目が大きな影響を与えることが図\ref{fig:gradcam_good}，図\ref{fig:gradcam_normal}より示唆される。\par
 
+このことから，タスクの精度は高いものの，モデルが正しく顔を認識しているか否かは，その学習方法とデータセットの特性に大きく依存することが判明した。
 
-
-しかしながら，一般人データセットの持つ乱雑な背景や美男美女データセットのもつ背景がシンプルかつ特定の構図などのデータセットとして根本的なバイアスの影響が見られ，新規学習モデルではモデルが顔ではなく背景を判断根拠としたモデル構築となってしまった。白背景に加工し再度GradCamを実行しても，一般人の判断根拠について，白背景の有無に関わらず右背景を注視する傾向にあり，人物には注目できていない点は変わらなかった。
-
-新規学習において，バイアスをモデルが捉えている可能性があり，データセットそのもの自体の欠如を示唆している。Custom Modelが高精度であったのは，事前学習によって顔領域を正しく認識できているためと考えられる。
 
 
 \section{反省・今後の課題}
 
 \subsection{反省点}
 \subsubsection*{データセットの誤り}
-新規学習モデルと追加学習モデルとの比較によって，構築したデータセットに誤りが含まれていることがあきらかになった。まとめると，以下のバイアスが構築したデータセットに含まれると考えられる。
+新規学習モデルと追加学習モデルとの比較によって，構築したデータセットに誤りが含まれていることがあきらかになった。
+構築したデータセットに含まれると考えられるバイアスと，どのようにすればこのバイアスを低減できるかの考察を以下にまとめる。
 \begin{itemize}
 	\item 一般人データセットの再利用の影響
 		\begin{itemize}
@@ -573,11 +613,13 @@ Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像の
 	\item  撮影日時の不均一性と年齢による特徴変化の未考慮（対処困難）
 	\item 背景・撮影状況のバイアス
 		\begin{itemize}
-			\item \textbf{想定される対処：}白背景にしてもGradCamの一般人の結果は変化しなかったため，偏りのないデータを多く用意する必要がある。
+			\item 撮影日時で画像を指定してスクレイピングを行うのは技術的に不可能であった。
+			\item 一般人データセットについては，人種・年齢ラベル付が行われている一方で，有名人データセットについては撮影日時が分からなかったため，2025年7月現在の年齢をラベルとして付与した。
+			\item \textbf{想定される対処：}用意する画像の量を増やす・全て白背景を適用後，不適切な画像を除去，アップサンプリング・ダウンサンプリングを施し学習を行う。
 		\end{itemize}
 	\item 画像のプロパティ（色、構図）の未考慮
 		\begin{itemize}
-			\item \textbf{想定される対処：}グレイスケールにする，顔のみ切り抜くなど
+			\item \textbf{想定される対処：}グレイスケールにする・顔のみ切り抜くなど
 		\end{itemize}
 \end{itemize}
 
@@ -595,6 +637,9 @@ GitHubを使おうとしたが，使える人数が少なくGitHubでのバー�
 
 \subsubsection*{構築したデータセットの人名の偏り改善}
 本実験では，2024年美男美女ランキングtop50をもとに，50名ずつ抽出し，アップサンプリング（左右反転）を施した。これは一般人のデータセットと比較して，偏りが生じる。他のアップサンプリングの方法として回転・輝度変更といった手法があるが，これらでさらにデータを増やすよりかは，美男美女の人名数を50名ずつよりさらに増やす方がバイアスを削減できると考える。本実験では時間の都合・第一回の実験時の計画がずれていたため省略した。
+
+\subsubsection*{白背景適用の改善}
+全て白背景を適用後，不適切な画像を除去，アップサンプリング・ダウンサンプリングを施し学習を行うことで，図\ref{fig:gradcam_good_white}，図\ref{fig:gradcam_normal_white}のような結果を改善できる可能性がある。
 
 
 
@@ -628,6 +673,8 @@ GitHubを使おうとしたが，使える人数が少なくGitHubでのバー�
   %github repo: https://github.com/jacobgil/pytorch-grad-cam
 \end{thebibliography}
 
+
+%コンパイル時の時間短縮のため，appendixを別のファイルで保存する。
 
 % ==============================================================================
 \clearpage
@@ -801,5 +848,7 @@ Workers調整&21.35&0.0026&100.00&100.00\\
 また，Lossの値にも一定の違いが見られた。特にBatchサイズを調整したケースでは学習Lossが最も低く（0.0003），学習がより安定して進んだことが示唆される。一方で，全体的にLossの値はいずれも低く，モデルがデータに対して過剰適合している兆候は見られなかった。
 
 以上の結果から，精度を維持したまま，学習時間や計算コストを削減するためには，ハイパーパラメータの適切な調整が非常に有効であることが示された。特に，本実験のように精度が頭打ちとなった状況においては，効率性の最適化が今後のモデル運用における重要な視点となると考えられる。
+
+
 
 \end{document}
