@@ -457,6 +457,7 @@ Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像の
 
 
 \subsection{検証結果}
+白背景適用後のGradCamの検証結果を図\ref{fig:gradcam_good}，図\ref{fig:gradcam_normal}に示す。
 %======================
 \begin{figure}[H]
     \centering
@@ -474,7 +475,8 @@ Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像の
 \end{figure}
 %======================
 
-\subsubsection{検証結果の考察}
+
+
 美男美女の判断根拠について，Customは顔全体，特に口元がよく見られているが，それ以外のResNet・EfficientNetについては，全体の傾向として，目と口が判断根拠になっていることがわかる。\par
 一方，一般人の判断根拠について，Customモデルは目元の上部（額と思われる）を見ており，それ以外のモデルは人物の右背景を見ていることがわかる。右背景を見ているのでは目的であった顔を見て分類する目的を果たせておらず，実験の目標は達成できていない。そこで次の章では，これらの背景の影響を抑えるために画像を白背景にして再度を学習を行った。
 %ただし，用意したデータセットをモデルごとに実行し，Grad-Camで得た出力の「モデルごとの平均」であることに注意したい。
@@ -525,15 +527,145 @@ Grad-CAM（Gradient-weighted Class Activation Mapping）というCNNが画像の
 %======================
 
 
-\subsection{検証結果}
-\label{label:検証結果}
+\subsubsection{検証結果の考察}
+\label{label:検証結果の考察}
 
 美男美女の判断根拠については，先ほどと同様に顔全体，特に目元・口元がよく見られているが，EfficientNetについては，顔から離れた背景ないしは目元を注視している。\par
 一方，一般人の判断根拠について，Custom Modelは額部分を注視している傾向にあると見受けられるが，新規学習モデルは白背景の有無に関わらず右背景を注視する傾向にあり，人物には注目できていないことがわかる。
 %ただし，用意したデータセットをモデルごとに実行し，Grad-Camで得た出力の「モデルごとの平均」であることに注意したい。
 
+\subsubsection{白背景適用後の精度}
 
-\subsection{考察}
+表\ref{tab:Custom_white}にCustom Model，表\ref{tab:Efficientnetb0_white}にEfficientNetB0，表\ref{tab:Resnet18_white}にResNet18，表\ref{tab:Resnet34_white}にResNet36 ，表\ref{tab:Resnet50_white}にResNet50を示す．
+
+% ======
+\begin{table}[H]
+\begin{minipage}{0.49\hsize}
+\centering
+\caption{Custom Model（白背景適用後）}
+\label{tab:Custom_white}
+\begin{tabular}{lrr}
+\hline
+Epoch & Train Accuracy & Validation Accuracy \\
+\hline
+1 & 99.06 & 99.35 \\
+2 & 99.52 & 99.50 \\
+3 & 99.58 & 99.47 \\
+4 & 99.61 & 99.53 \\
+5 & 99.63 & 99.58 \\
+6 & 99.63 & 99.59 \\
+7 & 99.65 & 99.57 \\
+8 & 99.66 & 99.58 \\
+9 & 99.65 & 99.57 \\
+10 & 99.68 & 99.58 \\
+\hline
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}{0.49\hsize}
+\centering
+\caption{EfficientNetB0（白背景適用後）}
+\label{tab:Efficientnetb0_white}
+\begin{tabular}{lrr}
+\hline
+Epoch & Train Accuracy & Validation Accuracy \\
+\hline
+1 & 95.42 & 98.99 \\
+2 & 98.98 & 99.13 \\
+3 & 99.33 & 99.34 \\
+4 & 99.44 & 99.45 \\
+5 & 99.55 & 99.45 \\
+6 & 99.52 & 99.47 \\
+7 & 99.57 & 99.21 \\
+8 & 99.54 & 99.52 \\
+9 & 99.59 & 99.52 \\
+10 & 99.57 & 99.54 \\
+\hline
+\end{tabular}
+\end{minipage}
+\end{table}
+%====
+\begin{table}[H]
+\begin{minipage}{0.49\hsize}
+\centering
+\caption{ResNet18（白背景適用後）}
+\label{tab:Resnet18_white}
+\begin{tabular}{lrr}
+\hline
+Epoch & Train Accuracy & Validation Accuracy \\
+\hline
+1 & 97.75 & 98.45 \\
+2 & 99.24 & 99.39 \\
+3 & 99.32 & 99.20 \\
+4 & 99.41 & 99.12 \\
+5 & 99.50 & 99.43 \\
+6 & 99.50 & 99.15 \\
+7 & 99.54 & 98.93 \\
+8 & 99.53 & 99.45 \\
+9 & 99.57 & 99.49 \\
+10 & 99.59 & 99.39 \\
+\hline
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}{0.49\hsize}
+\centering
+\caption{ResNet34（白背景適用後）}
+\label{tab:Resnet34_white}
+\begin{tabular}{lrr}
+\hline
+Epoch & Train Accuracy & Validation Accuracy \\
+\hline
+1 & 97.48 & 98.90 \\
+2 & 99.13 & 99.25 \\
+3 & 99.26 & 99.29 \\
+4 & 99.33 & 99.04 \\
+5 & 99.41 & 99.25 \\
+6 & 99.45 & 99.31 \\
+7 & 99.52 & 99.39 \\
+8 & 99.54 & 99.12 \\
+9 & 99.54 & 99.43 \\
+10 & 99.56 & 99.45 \\
+\hline
+\end{tabular}
+\end{minipage}
+\end{table}
+%====
+
+\begin{table}[H]
+\centering
+\caption{ResNet50（白背景適用後）}
+\label{tab:Resnet50_white}
+\begin{tabular}{lrr}
+\hline
+Epoch & Train Accuracy & Validation Accuracy \\
+\hline
+1 & 95.88 & 98.81 \\
+2 & 98.85 & 97.76 \\
+3 & 99.13 & 99.31 \\
+4 & 99.27 & 99.45 \\
+5 & 99.36 & 99.39 \\
+6 & 99.42 & 98.50 \\
+7 & 99.39 & 99.39 \\
+8 & 99.48 & 99.35 \\
+9 & 99.51 & 99.38 \\
+10 & 99.54 & 98.94 \\
+\hline
+\end{tabular}
+\end{table}
+% =====
+
+
+
+\subsubsection{白背景適用後の精度の考察}
+
+全体的な傾向として，白背景を適用した場合には，各モデルにおいて精度の低下が見られる．特に，Epoch 10 ですべてのモデルにおいて検証精度が低下していることが確認された．
+白背景適用後の検証精度が，Custom Modelはおおよそ0.5ポイント，ResNet18,36,50は0.2ポイント低下しており，EfficientNetにおいては，Epoch 1 の段階では白背景適用後の精度がやや高かったものの，その後のエポックにおいては一貫して精度が低下している。
+これらの傾向から，白背景適用後の方がモデルが正しく学習できていないことが示唆される。
+
+
+
+\subsection{GradCam適用結果を踏まえた実験全体の考察}
 
 新規学習モデルにおいて，図\ref{fig:gradcam_good_white}，図\ref{fig:gradcam_normal_white}のようになった結果を以下に考察する。
 \begin{itemize}
