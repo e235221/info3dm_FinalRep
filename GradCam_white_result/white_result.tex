@@ -1,0 +1,123 @@
+% 白背景適用後の精度
+¥subsubsection{白背景適用前後での精度比較}
+
+表¥ref{tab:Custom_white}にCustom Model，表¥ref{tab:Efficientnetb0_white}にEfficientNet¥_b0，表¥ref{tab:Resnet18_white}にResNet18，表¥ref{tab:Resnet34_white}にResNet36 ，表¥ref{tab:Resnet50_white}にResNet50を示す．
+
+% ======
+¥begin{table}[H]
+¥begin{minipage}{0.49¥hsize}
+¥centering
+¥caption{Custom Model（白背景適用後）}
+¥label{tab:Custom_white}
+¥begin{tabular}{lrr}
+¥hline
+Epoch & Train Accuracy & Test Accuracy ¥¥
+¥hline
+1 & 99.06 & 99.35 ¥¥
+2 & 99.52 & 99.50 ¥¥
+3 & 99.58 & 99.47 ¥¥
+4 & 99.61 & 99.53 ¥¥
+5 & 99.63 & 99.58 ¥¥
+6 & 99.63 & 99.59 ¥¥
+7 & 99.65 & 99.57 ¥¥
+8 & 99.66 & 99.58 ¥¥
+9 & 99.65 & 99.57 ¥¥
+10 & 99.68 & 99.58 ¥¥
+¥hline
+¥end{tabular}
+¥end{minipage}
+¥hfill
+¥begin{minipage}{0.49¥hsize}
+¥centering
+¥caption{EfficientNet¥_b0（白背景適用後）}
+¥label{tab:Efficientnetb0_white}
+¥begin{tabular}{lrr}
+¥hline
+Epoch & Train Accuracy & Test Accuracy ¥¥
+¥hline
+1 & 95.42 & 98.99 ¥¥
+2 & 98.98 & 99.13 ¥¥
+3 & 99.33 & 99.34 ¥¥
+4 & 99.44 & 99.45 ¥¥
+5 & 99.55 & 99.45 ¥¥
+6 & 99.52 & 99.47 ¥¥
+7 & 99.57 & 99.21 ¥¥
+8 & 99.54 & 99.52 ¥¥
+9 & 99.59 & 99.52 ¥¥
+10 & 99.57 & 99.54 ¥¥
+¥hline
+¥end{tabular}
+¥end{minipage}
+¥end{table}
+%====
+¥begin{table}[H]
+¥begin{minipage}{0.49¥hsize}
+¥centering
+¥caption{ResNet18（白背景適用後）}
+¥label{tab:Resnet18_white}
+¥begin{tabular}{lrr}
+¥hline
+Epoch & Train Accuracy & Test Accuracy ¥¥
+¥hline
+1 & 97.75 & 98.45 ¥¥
+2 & 99.24 & 99.39 ¥¥
+3 & 99.32 & 99.20 ¥¥
+4 & 99.41 & 99.12 ¥¥
+5 & 99.50 & 99.43 ¥¥
+6 & 99.50 & 99.15 ¥¥
+7 & 99.54 & 98.93 ¥¥
+8 & 99.53 & 99.45 ¥¥
+9 & 99.57 & 99.49 ¥¥
+10 & 99.59 & 99.39 ¥¥
+¥hline
+¥end{tabular}
+¥end{minipage}
+¥hfill
+¥begin{minipage}{0.49¥hsize}
+¥centering
+¥caption{ResNet34（白背景適用後）}
+¥label{tab:Resnet34_white}
+¥begin{tabular}{lrr}
+¥hline
+Epoch & Train Accuracy & Test Accuracy ¥¥
+¥hline
+1 & 97.48 & 98.90 ¥¥
+2 & 99.13 & 99.25 ¥¥
+3 & 99.26 & 99.29 ¥¥
+4 & 99.33 & 99.04 ¥¥
+5 & 99.41 & 99.25 ¥¥
+6 & 99.45 & 99.31 ¥¥
+7 & 99.52 & 99.39 ¥¥
+8 & 99.54 & 99.12 ¥¥
+9 & 99.54 & 99.43 ¥¥
+10 & 99.56 & 99.45 ¥¥
+¥hline
+¥end{tabular}
+¥end{minipage}
+¥end{table}
+%====
+
+¥begin{table}[H]
+¥centering
+¥caption{ResNet50（白背景適用後）}
+¥label{tab:Resnet50_white}
+¥begin{tabular}{lrr}
+¥hline
+Epoch & Train Accuracy & Test Accuracy ¥¥
+¥hline
+1 & 95.88 & 98.81 ¥¥
+2 & 98.85 & 97.76 ¥¥
+3 & 99.13 & 99.31 ¥¥
+4 & 99.27 & 99.45 ¥¥
+5 & 99.36 & 99.39 ¥¥
+6 & 99.42 & 98.50 ¥¥
+7 & 99.39 & 99.39 ¥¥
+8 & 99.48 & 99.35 ¥¥
+9 & 99.51 & 99.38 ¥¥
+10 & 99.54 & 98.94 ¥¥
+¥hline
+¥end{tabular}
+¥end{table}
+% =====
+
+
