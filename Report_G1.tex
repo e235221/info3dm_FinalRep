@@ -135,19 +135,19 @@
 \subsubsection{定義}
 本実験では，以下のように一般人と美男美女の定義を行う。
 \begin{itemize}
-    \item 一般人：FairFaceのデータセットで作成されたデータセット。
-    \item 美男美女：2024年度世界の美男美女ランキング上位top50を美男美女として定義する。
+    \item 一般人：FairFaceデータセットにより作成されたデータセット。
+    \item 美男美女：2024年度世界の美男美女ランキング上位top50。
 \end{itemize}
 
 \subsubsection{データセット構築}
 \begin{itemize}
-    \item 一般人のデータセット：FairFaceのデータセットを使用
-    \item 美男美女のデータセット：独自構築を行った。
+    \item 一般人のデータセット：FairFaceデータセットを使用する。
+    \item 美男美女のデータセット：独自構築を行う。
         \begin{itemize}
             \item[(1)] 美男美女の基準を決定 \\
-                2024年度美男美女ランキングtop50\cite{bidanshi}・\cite{bijoshi}を美男美女として扱う
+                2024年度美男美女ランキングtop50\cite{bidanshi}・\cite{bijoshi}を美男美女として扱う。
             \item[(2)] データの収集 \\
-                対象者の画像は，「2024年度美男美女ランキング」top50の人名からbing検索エンジンを用いてwebスクレイピングした。
+                対象者の画像は，「2024年度美男美女ランキング」top50の人名からbing検索エンジンを用いてwebスクレイピングを実行する。
                 \begin{itemize}
                 	\item	人名のみを検索キーワードとして入力した。この検索結果には当該人物の宣材写真，テレビ等のキャプチャ画像，オフショット写真に加えて，ファングッズ，似顔絵，ロゴなどの当該人物と無関係な画像も含まれていた。これらのうち，当該人物が写っているものを選別し，無関係なものは除外した。
                     \item ソースコードを以下のGitHubにて公開する。
@@ -168,14 +168,14 @@
         \end{itemize}
     \item アップサンプリング・ダウンサンプリング
         \begin{itemize}
-            \item アップサンプリング：データ数の少ない美男美女データの各画像を左右反転させることでデータ数を2倍に増やした。
+            \item アップサンプリング：データ数の少ない美男美女データの各画像を左右反転させることでデータ数を2倍に拡張した。
             \item ダウンサンプリング：データ数の多い美男美女データセットからランダムにデータを削除することで，美男美女データセットと一般人データセットのデータ件数を調節した。
             \item 画像数については，trainで31000枚ずつ，testで7800枚ずつの画像を用意した。
         \end{itemize}
     \item 美男美女・一般人データセットに対して，ラベル付け
         \begin{itemize}
-            \item webスクレイピングしで収集した画像データに対して，FairFaceで用意されているラベル付けと同様に美男美女データセットに対してもラベル付けを行い，それに加えて一般人か美男美女かを判別するためにそれぞれ0と1を付与した。
-            \item 新規作成した美男美女データセットについては，手作業で検索し，国籍・誕生日のラベルを付与した。
+            \item 美男美女データセットに対して，FairFaceで用意されているラベル付けと同様のラベルを付与し，さらに識別のために一般人を0，美男美女を1としたラベル付けをおこなった。。
+            \item 美男美女データセットに関する年齢・国籍の情報については，手作業で検索・確認のうえでラベルを付与した。
             \item \texttt{file\_name,age,gender,race,0/1}の5種類を列名としてcsvを作成した。\texttt{file\_name}に指定されたpathで画像を読み込み，学習を行う。
         \end{itemize}
     %\item ファイルのリネーム => GitHubリポジトリに詳細を記載。
@@ -240,7 +240,7 @@ FairFaceが提供する学習済みモデルを本研究のタスクに合わせ
 \label{tab:Custom}
 \begin{tabular}{lrr}
 \hline
- Epoch &  Train Accuracy &  Validation Accuracy \\
+ Epoch &  Train Accuracy &  Test Accuracy \\
 \hline
      1 &           99.48 &               100.00 \\
      2 &          100.00 &                99.99 \\
@@ -255,11 +255,11 @@ FairFaceが提供する学習済みモデルを本研究のタスクに合わせ
 \hline
 \end{tabular}
 \end{table}
-% 原因：過学習（valで結果が出ているから問題ない。）・データのリーク（=> 原因としてわかんない）・転移学習だからわかんないよ。
+% 原因：過学習（Test Accuracy で結果が出ているから問題ない。）・データのリーク（=> 原因としてわかんない）・転移学習だからわかんないよ。
 % 
 
 \subsubsection*{Custom Modelの考察：}
-学習済みモデルであるFairFaceに転移学習を施したCustom Modelは，エポック1からtrainの精度99.48\%，valの精度100.00\%と極めて高い精度を示した。エポック2以降もtrain,valの精度はほぼ100\%に達しており，この高精度が過学習によるものなのか，あるいは学習済みモデルや転移学習が原因となったものなのか，そもそも本モデルが画像のどの部分に着目して学習を行ったのかについても明確ではなく，高精度の要因の切り分けは困難である。さらに学習済みモデルについてGitHubや論文を参照しても詳細な情報は記載されておらず，内部の動作はブラックボックス化しており，原因の特定は困難である。\par
+学習済みモデルであるFairFaceに転移学習を施したCustom Modelは，エポック1からTrain Accuracyが99.48\%，Test Accuracy の精度100.00\%と極めて高い精度を示した。エポック2以降もTrain Accuracy,Test Accuracy はほぼ100\%に達しており，この高精度が過学習によるものなのか，あるいは学習済みモデルや転移学習が原因となったものなのか，そもそも本モデルが画像のどの部分に着目して学習を行ったのかについても明確ではなく，高精度の要因の切り分けは困難である。さらに学習済みモデルについてGitHubや論文を参照しても詳細な情報は記載されておらず，内部の動作はブラックボックス化しており，原因の特定は困難である。\par
 
 \subsection{Custom Modelの結果の透明性確保（仮説立て）}
 \label{label:仮設立て}
@@ -292,7 +292,7 @@ ResNet18,ResNet34,ResNet50とEfficientNet\_b0のモデルで新規学習を行�
 \label{tab:ResNet18}
 \begin{tabular}{lrr}
 \hline
- Epoch &  Train Accuracy &  Validation Accuracy \\
+ Epoch &  Train Accuracy &  Test Accuracy \\
 \hline
      1 &           97.92 &                99.28 \\
      2 &           99.23 &                99.22 \\
@@ -311,7 +311,7 @@ ResNet18,ResNet34,ResNet50とEfficientNet\_b0のモデルで新規学習を行�
 
 
 \subsubsection*{ResNet 18の考察：}
-ResNet-18は，Train Accuracyの精度が97.92\%から99.88\%まで順調に向上した一方，Validation Accuracyの精度は99.2\%から99.6\%の範囲で安定して推移していることがわかる。Train AccuracyとValidation Accuracyの値が激しく乖離しておらず，適切に学習できていることが示唆される。またエポック3以降は，学習精度と検証精度がほぼ同程度の水準で推移しており，安定した汎化性能を有していると評価できる。
+ResNet-18は，Train Accuracyの精度が97.92\%から99.88\%まで順調に向上した一方，Test Accuracyの精度は99.2\%から99.6\%の範囲で安定して推移していることがわかる。Train AccuracyとTest Accuracyの値が激しく乖離しておらず，適切に学習できていることが示唆される。またエポック3以降は，学習精度と検証精度がほぼ同程度の水準で推移しており，安定した汎化性能を有していると評価できる。
 
 
 \subsection{ResNet 34}
@@ -321,7 +321,7 @@ ResNet-18は，Train Accuracyの精度が97.92\%から99.88\%まで順調に向�
 \label{tab:ResNet34}
 \begin{tabular}{lrr}
 \hline
- Epoch &  Train Accuracy &  Validation Accuracy \\
+ Epoch &  Train Accuracy &  Test Accuracy \\
 \hline
      1 &           97.74 &                99.08 \\
      2 &           99.27 &                99.34 \\
@@ -338,7 +338,7 @@ ResNet-18は，Train Accuracyの精度が97.92\%から99.88\%まで順調に向�
 \end{table}
 
 \subsubsection*{ResNet 34の考察：}
-ResNet-34の結果は，ResNet-18と同様の傾向を示している。エポック10において，Train Accuracyが99.84，Validation Accuracyが99.47に達しており，ResNet18よりも若干低い性能を示している。前述のResNet18よりも層が深くなっているものの，検証の精度自体に著しい向上が見られなかったことから，ResNet18の時点で十分にモデルの表現能力が達成されており，これ以上層を増やしてもこれ以上の性能向上は見込めないだろう。
+ResNet-34の結果は，ResNet-18と同様の傾向を示している。エポック10において，Train Accuracyが99.84，Test Accuracyが99.47に達しており，ResNet18よりも若干低い性能を示している。前述のResNet18よりも層が深くなっているものの，検証の精度自体に著しい向上が見られなかったことから，ResNet18の時点で十分にモデルの表現能力が達成されており，これ以上層を増やしてもこれ以上の性能向上は見込めないだろう。
 
 \subsection{ResNet 50}
 
@@ -348,7 +348,7 @@ ResNet-34の結果は，ResNet-18と同様の傾向を示している。エポ�
 \label{tab:ResNet50}
 \begin{tabular}{lrr}
 \hline
- Epoch &  Train Accuracy &  Validation Accuracy \\
+ Epoch &  Train Accuracy &  Test Accuracy \\
 \hline
      1 &           95.26 &                98.58 \\
      2 &           98.69 &                98.76 \\
@@ -377,7 +377,7 @@ ResNet-18やResNet-34の性能を上回ることはなく，ResNetでは層を$1
 \label{tab:efficientnet}
 \begin{tabular}{lrr}
 \hline
- Epoch &  Train Accuracy &  Validation Accuracy \\
+ Epoch &  Train Accuracy &  Test Accuracy \\
 \hline
      1 &           94.47 &                98.76 \\
      2 &           99.00 &                99.19 \\
@@ -395,7 +395,7 @@ ResNet-18やResNet-34の性能を上回ることはなく，ResNetでは層を$1
 
 
 \subsubsection*{EfficientNet\_b0の考察：}
-エポック1の時点で既に高い精度を示しており，以降の学習過程においてもtrain,valの精度の両方がエポックの進行と共に安定して向上し，最終的にはエポック10で99.86という高い値を更新している。EfficientNet\_b0は本タスクにおいて極めて高い表現力を有しており，少数のエポックでも十分な収束が得られることがわかる。Train Accuracyと Validation Accuracy の推移は類似しており，両者間に大きな乖離は見られないことから，過学習の兆候も確認されない。
+エポック1の時点で既に高い精度を示しており，以降の学習過程においてもtrain,Test Accuracy の精度の両方がエポックの進行と共に安定して向上し，最終的にはエポック10で99.86という高い値を更新している。EfficientNet\_b0は本タスクにおいて極めて高い表現力を有しており，少数のエポックでも十分な収束が得られることがわかる。Train Accuracyと Test Accuracy の推移は類似しており，両者間に大きな乖離は見られないことから，過学習の兆候も確認されない。
 
 %\clearpage
 
@@ -546,7 +546,7 @@ Custom Model, EfficientNet\_b0, ResNet18,ResNet34,ResNet50におけるGrad-Cam�
 \label{tab:Custom_white}
 \begin{tabular}{lrr}
 \hline
-Epoch & Train Accuracy & Validation Accuracy \\
+Epoch & Train Accuracy & Test Accuracy \\
 \hline
 1 & 99.06 & 99.35 \\
 2 & 99.52 & 99.50 \\
@@ -568,7 +568,7 @@ Epoch & Train Accuracy & Validation Accuracy \\
 \label{tab:Efficientnetb0_white}
 \begin{tabular}{lrr}
 \hline
-Epoch & Train Accuracy & Validation Accuracy \\
+Epoch & Train Accuracy & Test Accuracy \\
 \hline
 1 & 95.42 & 98.99 \\
 2 & 98.98 & 99.13 \\
@@ -592,7 +592,7 @@ Epoch & Train Accuracy & Validation Accuracy \\
 \label{tab:Resnet18_white}
 \begin{tabular}{lrr}
 \hline
-Epoch & Train Accuracy & Validation Accuracy \\
+Epoch & Train Accuracy & Test Accuracy \\
 \hline
 1 & 97.75 & 98.45 \\
 2 & 99.24 & 99.39 \\
@@ -614,7 +614,7 @@ Epoch & Train Accuracy & Validation Accuracy \\
 \label{tab:Resnet34_white}
 \begin{tabular}{lrr}
 \hline
-Epoch & Train Accuracy & Validation Accuracy \\
+Epoch & Train Accuracy & Test Accuracy \\
 \hline
 1 & 97.48 & 98.90 \\
 2 & 99.13 & 99.25 \\
@@ -638,7 +638,7 @@ Epoch & Train Accuracy & Validation Accuracy \\
 \label{tab:Resnet50_white}
 \begin{tabular}{lrr}
 \hline
-Epoch & Train Accuracy & Validation Accuracy \\
+Epoch & Train Accuracy & Test Accuracy \\
 \hline
 1 & 95.88 & 98.81 \\
 2 & 98.85 & 97.76 \\
